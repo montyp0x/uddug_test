@@ -1,7 +1,3 @@
-Translated, your task description for implementing an ERC721 token project would be:
-
----
-
 # ERC721 Token Implementation Task
 
 ## Overview
