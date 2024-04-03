@@ -33,18 +33,12 @@ contract MyERC721Token is ERC721Enumerable {
         mintNum(numberOfTokens);
     }
 
-    function signedMint(uint256 numberOfTokens, bytes memory signature) public {
-        require(numberOfTokens <= MAX_MINT_PER_TX, "Cannot mint that many at once.");
+    function signedMint(uint256 numberOfTokens, bytes32 messageHash, bytes memory signature) public { // dev: not the best way to verify sinature, 
+        require(numberOfTokens <= MAX_MINT_PER_TX, "Cannot mint that many at once.");                   //      but i couldn't find a bug, sorry :) 
         require(totalSupply() + numberOfTokens <= MAX_SUPPLY, "Exceeds maximum supply.");
         require(!usedSignatures[signature], "Signature already used.");
         
-        bytes32 _messageHash = keccak256(abi.encodePacked(msg.sender, numberOfTokens));
-        bytes32 ethSignedMessageHash = keccak256(
-            abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash)
-        );
-
-        // require(ethSignedMessageHash.recover(signature) == msg.sender, "Invalid signature.");
-        // idk, some bugs with checking sigs, trying to solve them rn
+        require(messageHash.recover(signature) == msg.sender, "Invalid signature.");
 
         usedSignatures[signature] = true;
         
